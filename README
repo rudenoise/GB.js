@@ -1,0 +1,5 @@
+GB.js is a JavaScript Game-Book/CYOA (choose you own adventure) engine.
+
+The engine is unit tested and written in a functional style.
+
+The Demo is a work in progress, but by reading the unit tests it should be possible to work out best use.
