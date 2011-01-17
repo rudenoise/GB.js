@@ -79,11 +79,12 @@ Q = (function (Q, recursive) {
                     Q.fold(fun, fun(start, Q.h(arr)), Q.t(arr));
             }
         };
-        return Q.isArr(arr) && arr.length > 0 ?
-            val === Q.h(arr) ?
-                true : Q.inArr(val, Q.t(arr)) :
-            false;
-        };  
+        Q.inArr = function (val, arr) {
+            return Q.isArr(arr) && arr.length > 0 ?
+                val === Q.h(arr) ?
+                    true : Q.inArr(val, Q.t(arr)) :
+                false;
+        };
     } else {
         Q.same = function () {
             var args = toArr.call(arguments), rtn = true, i = 1;
