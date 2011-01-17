@@ -79,11 +79,10 @@ Q = (function (Q, recursive) {
                     Q.fold(fun, fun(start, Q.h(arr)), Q.t(arr));
             }
         };
-        Q.inArr = function (item, arr) {
-            return Q.isEmptyArr(arr) ?                      
-                false :                                     
-                Q.h(arr) === item ?
-                   true : Q.inArr(Q.t(arr));
+        return Q.isArr(arr) && arr.length > 0 ?
+            val === Q.h(arr) ?
+                true : Q.inArr(val, Q.t(arr)) :
+            false;
         };  
     } else {
         Q.same = function () {
@@ -120,6 +119,17 @@ Q = (function (Q, recursive) {
                 }
                 return start;
             }
+        };
+        Q.inArr = function (val, arr) {
+            if (Q.isArr(arr)) {
+                var i, l = arr.length;
+                for (i = 0; i < l; i += 1) {
+                    if (arr[i] === val) {
+                        return true;
+                    }
+                }
+            }
+            return false;
         };
     }
     Q.map = function (fun, arr) {
