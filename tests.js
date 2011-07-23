@@ -1,8 +1,8 @@
-/*global ovi, orpheus, music, module, test, asyncTest, start, ok, equal, expect, document, stop, console, Q, GB*/
+/*global ovi, orpheus, music, module, test, asyncTest, start, ok, equal, expect, document, stop, console, q, GB*/
 module("Basic Setup");
 test("NameSpaces", function () {
-    ok(typeof(Q) === "object", "Q lib exists");
-    ok(Q.isObj(GB), "GB exists");
+    ok(typeof(q) === "object", "Q lib exists");
+    ok(q.isO(GB), "GB exists");
 });
 module("Episodes", {
     setup: function () {
@@ -11,13 +11,23 @@ module("Episodes", {
             body: "The body of the episode looks like this.",
             choices: []
         };
+        this.exampleEpBadTitle = {
+            description: "A description...<",
+            body: "The body of the episode looks like this.",
+            choices: []
+        };
+        this.exampleEpBadBody = {
+            description: "A description...",
+            body: "The body of the episode > looks like this.",
+            choices: []
+        };
     },
     teardown: function () {
         delete this.exampleEp;
     }
 });
 test("Valid", function () {
-    ok(Q.isFun(GB.validEpisode), "validEpisode is a function");
+    ok(q.isF(GB.validEpisode), "validEpisode is a function");
     var v = GB.validEpisode;
     ok(v() === false, "Rejects empty args");
     ok((v("", 123) && v(function () {})) === false, "Rejects bad args");
@@ -28,13 +38,15 @@ test("Valid", function () {
         choices: {}
     }) === false, "Rejects well formed obj with bad types");
     ok(v(this.exampleEp), "Accepts well formed episode");
+    ok(v(this.exampleEpBadTitle) === false, "Rejects episode with ilegal char in title");
+    ok(v(this.exampleEpBadBody) === false, "Rejects episode with ilegal char in body");
 });
 test("Create", function () {
-    ok(Q.isFun(GB.createEpisode), "createEpisode is a function");
+    ok(q.isF(GB.createEpisode), "createEpisode is a function");
     var c = GB.createEpisode;
     ok(c() === false, "Rejects empty args");
     ok((c(1, 2) && c({}, function () {})) === false, "Rejects bad args");
-    ok(Q.isObj(c("d", "b", [])), "Correct args return obj");
+    ok(q.isO(c("d", "b", [])), "Correct args return obj");
     ok(GB.validEpisode(c("d", "b", [])), "Correct args return validEpisode");
 });
 module("Story List", {
@@ -49,7 +61,7 @@ module("Story List", {
     }
 });
 test("Valid Episode List", function () {
-    ok(Q.isFun(GB.validEpisodeList), "validEpisodeList is a function");
+    ok(q.isF(GB.validEpisodeList), "validEpisodeList is a function");
     var el = GB.validEpisodeList;
     ok(el() === false, "Rejects empty args");
     ok(el([]), "Accepts empty arr");
@@ -59,7 +71,7 @@ test("Valid Episode List", function () {
     ok(el(this.egList) === false, "Rejects invalid list");
 });
 test("Valid Choice", function () {
-    ok(Q.isFun(GB.validChoice), "validChoice is a function");
+    ok(q.isF(GB.validChoice), "validChoice is a function");
     var v = GB.validChoice;
     ok(v() === false, "Rejects empty args");
     ok(v(1, 2) === false, "Rejects bad args");
@@ -68,7 +80,7 @@ test("Valid Choice", function () {
     ok(v(this.egList, "Start") && v(this.egList, "Next"), "Accepts valid choices");
 });
 test("Add choice to episode", function () {
-    ok(Q.isFun(GB.addChoiceToEpisode), "addChoiceToEpisode is a function");
+    ok(q.isF(GB.addChoiceToEpisode), "addChoiceToEpisode is a function");
     var add = GB.addChoiceToEpisode, ep, ep2;
     ok(add() === false, "Rejects empty args");
     ok(add(1, [], {}) === false, "Rejects bad args");
@@ -97,7 +109,7 @@ module("Navigate", {
     }
 });
 test("Choice index", function () {
-    ok(Q.isFun(GB.episodeIndex), "episodeIndex is a function");
+    ok(q.isF(GB.episodeIndex), "episodeIndex is a function");
     var ei = GB.episodeIndex;
     ok(ei() === false, "Returns false for no args");
     ok(ei(1, "", {}) === false, "Rejects bad args");
@@ -108,7 +120,7 @@ test("Choice index", function () {
     ok(ei(this.egList, "Next") === 1, "Returns correct index id choice is later in list");
 });
 test("Display Episode", function () {
-    ok(Q.isFun(GB.displayEpisode), "displayEpisode is a function");
+    ok(q.isF(GB.displayEpisode), "displayEpisode is a function");
     var d = GB.displayEpisode;
     ok(d() === false, "Returns false for no args");
     ok(d(1, 2, 3) === false, "Rejects bad args");
@@ -128,11 +140,11 @@ module("Build story", {
     teardown: function () {}
 });
 test("Make Episode List", function () {
-    ok(Q.isFun(GB.makeEpisodeList), "makeStory is a function");
+    ok(q.isF(GB.makeEpisodeList), "makeStory is a function");
     var mel = GB.makeEpisodeList, egStry1, egStry2;
     ok(mel() === false, "Returns false for empty args");
     ok(mel(1, "") === false, "Rejects bad args");
-    ok(Q.isArr(mel([], this.ep1)), "Returns an array for valid args");
+    ok(q.isA(mel([], this.ep1)), "Returns an array for valid args");
     ok(mel([], this.ep1)[0].description === "Wake up", "Returns an array for valid args");
     ok(mel([this.ep1, this.ep2], this.ep3).length === 3, "Returns a story the correct length");
     egStry1 = mel([this.ep1, this.ep2], this.ep3);
@@ -140,10 +152,10 @@ test("Make Episode List", function () {
     egStry2 = mel(egStry1, GB.addChoiceToEpisode(egStry1, egStry1[0], "Go to bed"));
     ok(GB.validEpisodeList(egStry2), "Returns validEpisodeList");
     ok(egStry2[0].choices[0] === "Go to bed", "Correct episode updated with choice");
-    ok(Q.isUndef(egStry1[0].choices[0]), "makeEpisodeList is not destructive");
+    ok(q.isU(egStry1[0].choices[0]), "makeEpisodeList is not destructive");
 });
 test("Match Description Start", function () {
-    ok(Q.isFun(GB.matchStr), "GB.matchStr is a function");
+    ok(q.isF(GB.matchStr), "GB.matchStr is a function");
     var match = GB.matchStr;
     ok(match() === false, "Returns false for no args");
     ok(match(123, []) === false, "Rejects bad args");
@@ -155,23 +167,23 @@ test("Match Description Start", function () {
         "Accepts pairs that start with same chars");
 });
 test("Filter Choices", function () {
-    ok(Q.isFun(GB.filter), "GB.filter exists");
+    ok(q.isF(GB.filter), "GB.filter exists");
     var rslt = fil = GB.filter,
         egStry = GB.makeEpisodeList([this.ep1, this.ep2], this.ep3);
     ok(fil() === false, "Rejects empty args");
     ok(fil(12, []) === false, "Rejects bad args");
-    ok(Q.isArr(fil([], "")),
+    ok(q.isA(fil([], "")),
         "Returns an array with arr and empty string");
     rslt = fil(egStry, "nnn"); 
-    ok(Q.isArr(rslt) && rslt.length === 0,
+    ok(q.isA(rslt) && rslt.length === 0,
         "Returns an empty array for no matches");
     rslt = fil(egStry, "W"); 
-    ok(Q.isArr(rslt) && rslt.length === 1,
+    ok(q.isA(rslt) && rslt.length === 1,
         "Returns an array 1 long matches");
     egStry = GB.makeEpisodeList(egStry, GB.createEpisode("Wank", ""));
     rslt = fil(egStry, "Wa");
     //console.log(egStry); 
-    //console.log(rslt); 
-    ok(Q.isArr(rslt) && rslt.length === 2,
+    console.log(rslt); 
+    ok(q.isA(rslt) && rslt.length === 2,
         "Returns an array 2 long matches");
 });
