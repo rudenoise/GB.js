@@ -76,5 +76,10 @@ var GB = (function (GB) {
                     GB.filter(q.t(epLi), str) :
             false;
     };
+    // PRIVATE
+    escape = function (html) {
+        // TODO: Add html escaping when rendering page text
+        return new Option(html).innerHTML;
+    };
     return GB;
 })(GB || {});
